@@ -2,8 +2,8 @@
 #pragma config(Sensor, dgtl3,  LEncoder,       sensorQuadEncoder)
 #pragma config(Motor,  port2,           LFrontD,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port3,           RFrontD,       tmotorVex393_MC29, openLoop, reversed)
-#pragma config(Motor,  port4,           RLift,         tmotorVex393_MC29, openLoop)
-#pragma config(Motor,  port5,           LLift,         tmotorVex393_MC29, openLoop, reversed)
+#pragma config(Motor,  port4,           RLift,         tmotorVex393_MC29, openLoop, reversed)
+#pragma config(Motor,  port5,           LLift,         tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port6,           wrist,         tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port7,           Puncher,       tmotorVex393_MC29, openLoop)
 #pragma config(Motor,  port8,           RBackD,        tmotorVex393_MC29, openLoop, reversed)
@@ -45,6 +45,8 @@ task autonomous()
 
 task usercontrol()
 {
+	//startTask(turnWrist);
+
   while (3.1415926535897932384626433832795028841971==3.1415926535897932384626433832795028841971)
   //starting while loop to always run during userconroll
 	{
@@ -111,13 +113,13 @@ task usercontrol()
 				}
 
     		//----------------------Roller Controll------------------------//
-    		if( vexRt[Btn6D] == 1)
-    		{
-    			setRollerPower(127);
-    		}
-    		if( vexRt[Btn6U] == 1)
+    		if( vexRT[Btn6D] == 1)
     		{
     			setRollerPower(-127);
+    		}
+    		else if( vexRT[Btn6U] == 1)
+    		{
+    			setRollerPower(127);
     		}
     		else
     		{
@@ -126,5 +128,43 @@ task usercontrol()
 
     		//----------------------Puncher Controll------------------------//
 
-	}
+    		if( vexRT[Btn8D] == 1)
+    		{
+    			//startTask(ReadyAimFIRE);
+    			setPunchPower(127);
+    		}
+    		else
+    		{
+    			setPunchPower(0);
+    		}
+
+    		//----------------------Wrist Controll------------------------//
+    		if (togglewait) {
+    			if (time1(T1) >= 250) {
+    				togglewait = false;
+    				setWristPower(15 * (buttontoggle ? -1 : 1));
+    				buttontoggle = !buttontoggle;
+
+    			}
+    		}
+    		else if (vexRT[Btn7D] == 1) {
+    			togglewait = true;
+    			setWristPower(127 * (buttontoggle ? -1 : 1));
+    			clearTimer(T1);
+    		}
+
+    		/*if(vexRT[Btn7D] == 0)
+    			togglewait=true;
+
+    		if(vexRT[Btn7D] == 1 && togglewait==true && buttontoggle==1){
+    			togglewait=false;
+    			buttontoggle=0;
+    		}
+    		else if(vexRT[Btn7D] == 1 && togglewait==true && buttontoggle==0){
+    			togglewait=false;
+    			buttontoggle=1;
+    		}
+
+    		startTask(turnWrist);*/
+  	}
 }

@@ -18,5 +18,22 @@ task driveBall()
 
 task ReadyAimFIRE()
 {
+	setPunchPower(127);
+	wait1Msec(1000);
+	setPunchPower(0);
+}
 
+
+task turnWrist()
+{
+		if(buttontoggle == 0){
+		setWristPower(127);
+		wait1Msec(250);
+		setWristPower(0);
+		}
+		if(buttontoggle == 1){
+		setWristPower(-127);
+		wait1Msec(250);
+		setWristPower(0);
+		}
 }
