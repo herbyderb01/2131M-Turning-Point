@@ -1,3 +1,4 @@
+#pragma config(Sensor, in1,    liftPot,        sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  REncoder,       sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  LEncoder,       sensorQuadEncoder)
 #pragma config(Motor,  port2,           LFrontD,       tmotorVex393_MC29, openLoop)
@@ -22,6 +23,7 @@
 
 #include "Vars.c"
 #include "MotorSetUpVoids.c"
+#include "PID.c"
 
 #include "Voids&Tasks.c"
 
@@ -46,6 +48,10 @@ task autonomous()
 task usercontrol()
 {
 	//startTask(turnWrist);
+	//
+	startTask(liftRController);
+	liftRRequestedValue = LiftBottom;
+
 
   while (3.1415926535897932384626433832795028841971==3.1415926535897932384626433832795028841971)
   //starting while loop to always run during userconroll
@@ -54,19 +60,19 @@ task usercontrol()
 		{																											//
 			usertoggle=1;																				//
 		}																											//
-		if (vexRT[Btn7L]==1 && skillsVar==1 && usertoggle==1) //
+		if (vexRT[Btn7L]==1 && modeVar==1 && usertoggle==1) //
 		{																											//  USER CONTROL TOGGLE
-			skillsVar=0;																				//		- To switch between
+			modeVar=0;																				//		- To switch between
 			usertoggle=0;																				//			our two different
 		}																											//			modes
-		if (vexRT[Btn7L]==1 && skillsVar==0 && usertoggle==1)	//
+		if (vexRT[Btn7L]==1 && modeVar==0 && usertoggle==1)	//
 		{																											//
-			skillsVar=1;																				//
+			modeVar=1;																				//
 			usertoggle=0;																				//
 		}																											//
 
 	//=========================Normal Caps Drive Control===========================//
-		if (skillsVar == 0)
+		if (modeVar == 0)
 		{
 	    if (initalize==0)																			// To Initalize Normal
 	    {																											// match Code
@@ -74,20 +80,45 @@ task usercontrol()
  				startTask(driveCaps);
 	    }
     	initalize=1;	// initalize for toggle
-  	}
-  	//=========================Ball-Drive-Contol================================//
 
-	  if (skillsVar == 1)
-	  {
-	    if (initalize==1)
-	    {
- 				stopTask(driveCaps);
- 				startTask(driveBall);
-	    }
-	    initalize=0;	// initalize for toggle
-	  }
-	      //----------------------Lift Controll------------------------//
-				if( vexRT[Btn5D] == 1)      // Setting Btn5D to lift Down
+    		      //----------------------Lift Controll------------------------//
+	  		if(liftMode > 5)
+	  			liftMode = 5;
+	  		if(liftMode < 1)
+	  			liftMode = 1;
+
+	  		if(vexRT[Btn5D] == 0 && vexRT[Btn5U] == 0)
+	  			liftButtonWait=true;
+	  		if(vexRT[Btn5U] == 1 && liftButtonWait == true && liftMode <= 5){
+	  			liftButtonWait=false;
+	  			liftMode++;
+	  		}
+
+	  		if(vexRT[Btn5D] == 1 && liftButtonWait == true && liftMode >= 1){
+	  			liftButtonWait=false;
+	  			liftMode--;
+	  		}
+
+	  		if(liftMode == 1)
+	  			liftRRequestedValue = 900;
+	  		if(liftMode == 2)
+	  			liftRRequestedValue = 1274;
+	  		if(liftMode == 3)
+	  			liftRRequestedValue = 2100;
+	  		if(liftMode == 4)
+	  			liftRRequestedValue = 2700;
+	  		if(liftMode == 5)
+	  			liftRRequestedValue = 3000;
+
+	  		/*if( vexRT[Btn5D] == 1)      // Setting Btn5D to lift Down
+				{
+					liftRRequestedValue = LiftBottom;
+				}
+				else if( vexRT[Btn5U] == 1)      // Setting Btn5U to lift Up
+				{
+					liftRRequestedValue = LiftTop;
+				}*/
+				/*if( vexRT[Btn5D] == 1)      // Setting Btn5D to lift Down
 				{
 					setLiftPower(-127);
 					liftstillspeed=-15;
@@ -110,7 +141,34 @@ task usercontrol()
 				else
 				{
 					setLiftPower(liftstillspeed);	// Setting the Still Speed when no commands
-				}
+				}*/
+  	}
+  	//=========================Ball-Drive-Contol================================//
+
+	  if (modeVar == 1)
+	  {
+	    if (initalize==1)
+	    {
+ 				stopTask(driveCaps);
+ 				startTask(driveBall);
+ 				liftRRequestedValue = 1274;
+	    }
+	    initalize=0;	// initalize for toggle
+
+	     	//----------------------Puncher Controll------------------------//
+
+    		if( vexRT[Btn8D] == 1)
+    		{
+    			//startTask(ReadyAimFIRE);
+    			setPunchPower(127);
+    		}
+    		else
+    		{
+    			setPunchPower(0);
+    		}
+
+	  }
+
 
     		//----------------------Roller Controll------------------------//
     		if( vexRT[Btn6D] == 1)
@@ -124,18 +182,6 @@ task usercontrol()
     		else
     		{
     			setRollerPower(0);
-    		}
-
-    		//----------------------Puncher Controll------------------------//
-
-    		if( vexRT[Btn8D] == 1)
-    		{
-    			//startTask(ReadyAimFIRE);
-    			setPunchPower(127);
-    		}
-    		else
-    		{
-    			setPunchPower(0);
     		}
 
     		//----------------------Wrist Controll------------------------//
@@ -152,19 +198,5 @@ task usercontrol()
     			setWristPower(127 * (buttontoggle ? -1 : 1));
     			clearTimer(T1);
     		}
-
-    		/*if(vexRT[Btn7D] == 0)
-    			togglewait=true;
-
-    		if(vexRT[Btn7D] == 1 && togglewait==true && buttontoggle==1){
-    			togglewait=false;
-    			buttontoggle=0;
-    		}
-    		else if(vexRT[Btn7D] == 1 && togglewait==true && buttontoggle==0){
-    			togglewait=false;
-    			buttontoggle=1;
-    		}
-
-    		startTask(turnWrist);*/
-  	}
+    }
 }
