@@ -3,9 +3,9 @@
 //#region Lift PID
 //----------------------LIFT PID----------------------//
 
-static float  liftR_Kp = 0.2; 	//Power Tuning Value
+static float  liftR_Kp = 0.15; 	//Power Tuning Value
 static float  liftRRequestedValue;
-static float  liftR_Kd = 1;			// Requested Guess Value
+static float  liftR_Kd = 0.4;			// Requested Guess Value
 
 float liftRD;
 float liftRP;
