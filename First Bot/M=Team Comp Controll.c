@@ -100,15 +100,15 @@ task usercontrol()
 	  		}
 
 	  		if(liftMode == 1)
-	  			liftRRequestedValue = 900;
+	  			liftRRequestedValue = 936;
 	  		if(liftMode == 2)
-	  			liftRRequestedValue = 1274;
+	  			liftRRequestedValue = 1300;
 	  		if(liftMode == 3)
-	  			liftRRequestedValue = 2100;
+	  			liftRRequestedValue = 2350;
 	  		if(liftMode == 4)
-	  			liftRRequestedValue = 2700;
-	  		if(liftMode == 5)
 	  			liftRRequestedValue = 3000;
+	  		if(liftMode == 5)
+	  			liftRRequestedValue = 3600;
 
 	  		/*if( vexRT[Btn5D] == 1)      // Setting Btn5D to lift Down
 				{
