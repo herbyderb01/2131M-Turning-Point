@@ -100,13 +100,13 @@ task usercontrol()
 	  		}
 
 	  		if(liftMode == 1)
-	  			liftRRequestedValue = 936;
+	  			liftRRequestedValue = 850;
 	  		if(liftMode == 2)
 	  			liftRRequestedValue = 1300;
 	  		if(liftMode == 3)
-	  			liftRRequestedValue = 2350;
+	  			liftRRequestedValue = 2200;
 	  		if(liftMode == 4)
-	  			liftRRequestedValue = 3000;
+	  			liftRRequestedValue = 2908;
 	  		if(liftMode == 5)
 	  			liftRRequestedValue = 3600;
 
@@ -186,7 +186,7 @@ task usercontrol()
 
     		//----------------------Wrist Controll------------------------//
     		if (togglewait) {
-    			if (time1(T1) >= 250) {
+    			if (time1(T1) >= 300) {
     				togglewait = false;
     				setWristPower(15 * (buttontoggle ? -1 : 1));
     				buttontoggle = !buttontoggle;
