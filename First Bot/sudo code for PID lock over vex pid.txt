@@ -1,0 +1,9 @@
+void PotLiftPIDSS(){ //sudo codo for pot lift limitier for our lift
+	int potValue;
+	if (the lift is moving)
+		
+		//the end of the sequence
+	if (the lift is not moving AND )
+		wait for lift to get there, 
+		
+}
